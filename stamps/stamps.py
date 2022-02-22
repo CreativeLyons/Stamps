@@ -31,6 +31,7 @@ STAMPS_HELP = "Stamps by Adrian Pueyo and Alexey Kuchinski.\nUpdated "+date
 VERSION_TOOLTIP = "Stamps by Adrian Pueyo and Alexey Kuchinski.\nUpdated "+date+"."
 STAMPS_SHORTCUT = "F8"
 KEEP_ORIGINAL_TAGS = True
+SHOW_PROPERTIES = False
 
 if 'Stamps_LastCreated' not in globals():
     Stamps_LastCreated = None
@@ -144,7 +145,7 @@ def wiredTagsAndBackdrops(n, updateSimilar=False):
             ns = [i for i in allWireds() if i.knob("anchor").value() == an]
         else:
             ns = [n]
-        
+
         for n in ns:
             try:
                 tags_knob = n.knob("tags")
@@ -326,7 +327,7 @@ def retitleAnchor(ref = ""):
     '''
     Retitle Anchor of current wired stamp to match its title.
     returns: anchor node
-    ''' 
+    '''
     if ref == "":
         ref = nuke.thisNode()
     try:
@@ -674,15 +675,15 @@ except:
 ### STAMP, ANCHOR, WIRED
 #################################
 
-def anchor(title = "", tags = "", input_node = "", node_type = "2D"):
+def anchor(title = "", tags = "", input_node = "", node_type = "2D", anchor_inpanel = SHOW_PROPERTIES):
     ''' Anchor Stamp '''
     try:
-        n = nuke.createNode(AnchorClassesAlt[node_type])
+        n = nuke.createNode(AnchorClassesAlt[node_type], inpanel = anchor_inpanel)
     except:
         try:
-            n = nuke.createNode(StampClasses[node_type])
+            n = nuke.createNode(StampClasses[node_type], inpanel = anchor_inpanel)
         except:
-            n = nuke.createNode("NoOp")
+            n = nuke.createNode("NoOp", inpanel = anchor_inpanel)
     name = getAvailableName("Anchor",rand=True)
     n["name"].setValue(name)
     # Set default knob values
@@ -748,19 +749,19 @@ def anchor(title = "", tags = "", input_node = "", node_type = "2D"):
 
     return n
 
-def wired(anchor):
+def wired(anchor, wired_inpanel = SHOW_PROPERTIES):
     ''' Wired Stamp '''
     global Stamps_LastCreated
     Stamps_LastCreated = anchor.name()
 
     node_type = nodeType(realInput(anchor))
     try:
-        n = nuke.createNode(StampClassesAlt[node_type])
+        n = nuke.createNode(StampClassesAlt[node_type], inpanel = wired_inpanel)
     except:
         try:
-            n = nuke.createNode(StampClasses[node_type])
+            n = nuke.createNode(StampClasses[node_type], inpanel = wired_inpanel)
         except:
-            n = nuke.createNode("NoOp")
+            n = nuke.createNode("NoOp", inpanel = wired_inpanel)
     n["name"].setValue(getAvailableName("Stamp"))
     # Set default knob values
     for i,j in wired_defaults.items():
